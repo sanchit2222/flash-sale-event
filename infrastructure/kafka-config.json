@@ -1,0 +1,15 @@
+{
+  "deploymentType": "ec2",
+  "instanceId": "i-045b01ff47731905f",
+  "privateIp": "10.0.10.61",
+  "bootstrapServers": "10.0.10.61:9092",
+  "zookeeperConnect": "10.0.10.61:2181",
+  "topics": {
+    "reservations": "flash-sale-reservations",
+    "purchaseConfirmations": "flash-sale-purchase-confirmations",
+    "inventoryUpdates": "flash-sale-inventory-updates",
+    "expiryEvents": "flash-sale-expiry-events"
+  },
+  "keyPairName": "flash-sale-kafka-key",
+  "keyPairPath": "infrastructure/flash-sale-kafka-key.pem"
+}

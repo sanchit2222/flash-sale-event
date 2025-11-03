@@ -1,0 +1,232 @@
+# Flash Sale Application Configuration
+# This file contains configuration for all environments
+# Override these values with environment-specific profiles (application-dev.yml, application-prod.yml)
+
+spring:
+  application:
+    name: flash-sale-service
+
+  # Database Configuration (PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flashsale
+    username: postgres
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Connection pool settings for high throughput
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Use Flyway/Liquibase for migrations in production
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    show-sql: false  # Set to true for debugging
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 2000ms
+        shutdown-timeout: 100ms
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all  # Wait for all replicas to acknowledge
+      retries: 3
+      batch-size: 16384
+      linger-ms: 10
+      buffer-memory: 33554432
+      compression-type: snappy
+      properties:
+        # Producer reliability settings
+        max.in.flight.requests.per.connection: 5
+        enable.idempotence: true
+        # SKU-based partitioning: message key = skuId (default hash partitioner)
+        # Ensures all reservation requests for same SKU go to same partition (single-writer pattern)
+    consumer:
+      group-id: flash-sale-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false  # Manual acknowledgment for reliability
+      properties:
+        # Batch size: Process up to 250 requests per poll (target: 10ms per batch)
+        max.poll.records: 250
+
+        # Consumer failure detection: If consumer doesn't poll within 3s, trigger rebalancing
+        # (batch processes in ~10ms, so 3s provides ample headroom for GC pauses)
+        max.poll.interval.ms: 3000
+
+        # Low-latency fetching: Wait max 10ms to accumulate messages (matches batch processing time)
+        # This prevents artificial latency - if batch is ready in 5ms, don't wait 500ms!
+        fetch.min.bytes: 1
+        fetch.max.wait.ms: 10
+
+        # Session management
+        session.timeout.ms: 10000
+        heartbeat.interval.ms: 3000
+
+        # Consumer performance tuning
+        isolation.level: read_committed  # Only read committed messages
+    listener:
+      # Batch listener configuration
+      type: batch  # Enable batch listening mode
+      ack-mode: manual  # Manual acknowledgment after successful batch processing
+      concurrency: 10  # 10 concurrent consumers (one per partition)
+
+    # Kafka Admin Configuration for topic management
+    admin:
+      properties:
+        # Admin client settings for topic creation and management
+        bootstrap.servers: localhost:9092
+
+    # Topic definitions (used by KafkaTopicConfig bean for auto-creation)
+    topics:
+      # Legacy topics (kept for backward compatibility)
+      reservations: flash-sale-reservations
+      inventory-updates: flash-sale-inventory-updates
+      orders: flash-sale-orders
+
+      # High-throughput batch processing topics
+      reservation-requests:
+        name: reservation-requests
+        partitions: 10  # 10 partitions for parallel processing (single-writer per SKU via hash partitioning)
+        replication-factor: 3  # High availability
+        config:
+          # Topic-level configurations for high-throughput, low-latency processing
+          min.insync.replicas: 2  # At least 2 replicas must acknowledge writes
+          retention.ms: 86400000  # 24 hours retention
+          compression.type: snappy  # Snappy compression for better throughput
+          segment.ms: 3600000  # 1 hour segment roll
+
+      reservation-responses:
+        name: reservation-responses
+        partitions: 10
+        replication-factor: 3
+        config:
+          min.insync.replicas: 2
+          retention.ms: 86400000
+          compression.type: snappy
+
+# AWS Configuration
+cloud:
+  aws:
+    region: us-east-1
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID:}
+      secret-key: ${AWS_SECRET_ACCESS_KEY:}
+    cloudwatch:
+      namespace: FlashSale
+      batch-size: 20
+      step: PT1M  # Publish metrics every 1 minute
+
+# Server Configuration
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    max-connections: 10000
+    accept-count: 100
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.cred.freestyle.flashsale: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/flash-sale.log
+    max-size: 100MB
+    max-history: 30
+
+# Management and Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      cloudwatch:
+        enabled: true
+        namespace: FlashSale
+        batch-size: 20
+        step: 1m
+
+# Application-specific Configuration
+flashsale:
+  reservation:
+    ttl-seconds: 120  # 2 minutes reservation hold time
+    cleanup-interval-ms: 30000  # Check for expired reservations every 30 seconds
+    # Layer 2: Scheduled Cleanup Job (Three-Layer Redundancy System)
+    expiry-scheduler:
+      enabled: true  # Enable automatic expiry cleanup (runs every 10 seconds)
+      batch-size: 100  # Process up to 100 expired reservations per run
+
+  inventory:
+    cache-ttl-seconds: 300  # Cache stock counts for 5 minutes
+    # Batch processing configuration
+    batch-processing:
+      enabled: true  # Enable Kafka batch processing
+      batch-size: 250  # Process 250 requests per batch (target: 10ms per batch)
+      max-batch-latency-ms: 10  # Target batch processing latency
+      partition-count: 10  # Number of Kafka partitions (one consumer per partition)
+      single-writer-per-sku: true  # Enable single-writer pattern
+      oversell-alert-threshold: 0  # Alert on any oversell (zero tolerance)
+
+  purchase-limits:
+    max-quantity-per-product: 1  # Maximum units per user per product
+    cache-ttl-seconds: 86400  # Cache user purchase flags for 24 hours
+
+  rate-limiting:
+    enabled: true
+    requests-per-second: 100  # Per user rate limit
+
+  product:
+    cache-ttl-seconds: 600  # Cache product details for 10 minutes
+
+  # Performance targets (used for monitoring and alerting)
+  performance:
+    target-throughput-rps: 25000  # Target: 25,000 requests per second
+    p95-latency-target-ms: 120  # P95 latency must be under 120ms
+    p99-latency-target-ms: 200  # P99 latency target
+    expected-batch-throughput: 100  # Expected batches processed per second

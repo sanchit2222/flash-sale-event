@@ -1,0 +1,157 @@
+# Flash Sale Application - AWS Configuration Profile
+# This profile contains configuration for AWS deployment
+# Activate with: --spring.profiles.active=aws or SPRING_PROFILES_ACTIVE=aws
+
+spring:
+  application:
+    name: flash-sale-service
+
+  # Database Configuration (RDS PostgreSQL)
+  datasource:
+    url: jdbc:postgresql://flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com:5432/flashsaledb
+    username: flashsaleadmin
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Connection pool settings for high throughput
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Use Flyway/Liquibase for migrations in production
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+
+  # Redis Configuration (ElastiCache)
+  data:
+    redis:
+      host: flash-sale-redis.s8ocwg.0001.aps1.cache.amazonaws.com
+      port: 6379
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          max-wait: 2000ms
+        shutdown-timeout: 100ms
+
+  # Kafka Configuration (EC2-hosted)
+  kafka:
+    bootstrap-servers: 10.0.10.61:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all  # Wait for all replicas to acknowledge
+      retries: 3
+      batch-size: 16384
+      linger-ms: 10
+      buffer-memory: 33554432
+      compression-type: snappy
+    consumer:
+      group-id: flash-sale-consumer-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: 500
+    topics:
+      reservations: flash-sale-reservations
+      inventory-updates: flash-sale-inventory-updates
+      orders: flash-sale-purchase-confirmations
+
+# AWS Configuration
+cloud:
+  aws:
+    region: ap-south-1
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID:}
+      secret-key: ${AWS_SECRET_ACCESS_KEY:}
+    cloudwatch:
+      namespace: FlashSale
+      batch-size: 20
+      step: PT1M  # Publish metrics every 1 minute
+
+# Server Configuration
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    max-connections: 10000
+    accept-count: 100
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+
+# Logging Configuration (Production)
+logging:
+  level:
+    root: INFO
+    com.cred.freestyle.flashsale: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /var/log/flash-sale/flash-sale.log
+    max-size: 100MB
+    max-history: 30
+
+# Management and Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      cloudwatch:
+        enabled: true
+        namespace: FlashSale
+        batch-size: 20
+        step: 1m
+
+# Application-specific Configuration
+flashsale:
+  reservation:
+    ttl-seconds: 120  # 2 minutes reservation hold time
+    cleanup-interval-ms: 30000  # Check for expired reservations every 30 seconds
+    # Layer 2: Scheduled Cleanup Job (Three-Layer Redundancy System)
+    expiry-scheduler:
+      enabled: true  # Enable automatic expiry cleanup (runs every 10 seconds)
+      batch-size: 100  # Process up to 100 expired reservations per run
+
+  inventory:
+    cache-ttl-seconds: 300  # Cache stock counts for 5 minutes
+
+  purchase-limits:
+    max-quantity-per-product: 1  # Maximum units per user per product
+    cache-ttl-seconds: 86400  # Cache user purchase flags for 24 hours
+
+  rate-limiting:
+    enabled: true
+    requests-per-second: 100  # Per user rate limit
+
+  product:
+    cache-ttl-seconds: 600  # Cache product details for 10 minutes

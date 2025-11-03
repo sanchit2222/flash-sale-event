@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FLASH_SALE_SOLUTION_DESIGN.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="flash-sale-system---solution-design-document">Flash Sale System - Solution Design Document</h1>
+<p><strong>Version</strong>: 1.0
+<strong>Date</strong>: 2025-01-15
+<strong>Status</strong>: Approved for Implementation</p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-problem-statement">Problem Statement</a></li>
+<li><a href="#2-requirements">Requirements</a></li>
+<li><a href="#3-proposed-solution---high-level-overview">Proposed Solution - High Level Overview</a></li>
+<li><a href="#4-system-architecture">System Architecture</a></li>
+<li><a href="#5-key-design-decisions">Key Design Decisions</a></li>
+<li><a href="#6-performance-analysis">Performance Analysis</a></li>
+<li><a href="#7-cost-estimation">Cost Estimation</a></li>
+<li><a href="#8-operational-considerations">Operational Considerations</a></li>
+<li><a href="#appendix-a-alternative-approaches-considered">Appendix A: Alternative Approaches Considered</a></li>
+<li><a href="#appendix-b-queue-wait-time-analysis">Appendix B: Queue Wait Time Analysis</a></li>
+<li><a href="#appendix-c-risk--failure-mode-analysis">Appendix C: Risk &amp; Failure Mode Analysis</a></li>
+</ol>
+<hr>
+<h2 id="1-problem-statement">1. Problem Statement</h2>
+<h3 id="business-context">Business Context</h3>
+<p>We need to design a system to host flash sale events where <strong>10,000 units</strong> of a high-demand product are sold to <strong>millions of concurrent users</strong> within <strong>minutes</strong> (potentially seconds). The sale creates extreme traffic spikes with the following challenges:</p>
+<p><strong>Traffic Characteristics:</strong></p>
+<ul>
+<li><strong>250,000 read requests/second</strong> (users checking product availability)</li>
+<li><strong>25,000 write requests/second</strong> (reservation attempts for single SKU)</li>
+<li><strong>Extreme contention</strong>: All users competing for the same inventory record</li>
+<li><strong>Bursty traffic</strong>: Most traffic arrives within the first 30 seconds</li>
+<li><strong>Bot attacks</strong>: Automated systems attempting to monopolize inventory</li>
+</ul>
+<p><strong>Business Constraints:</strong></p>
+<ul>
+<li><strong>Zero oversell tolerance</strong>: Cannot sell more than 10,000 units (legal/compliance requirement)</li>
+<li><strong>Strict latency requirements</strong>: Must provide responsive user experience under load</li>
+<li><strong>Fair distribution</strong>: Prevent bots from winning; ensure legitimate users have fair chance</li>
+<li><strong>Complete auditability</strong>: Every inventory decision must be traceable</li>
+<li><strong>Reservation expiry</strong>: Hold units for 2 minutes, auto-release if not checked out</li>
+</ul>
+<h3 id="core-technical-challenge">Core Technical Challenge</h3>
+<p>Traditional database architectures fail catastrophically at this scale:</p>
+<p><strong>Pessimistic locking (row locks):</strong></p>
+<ul>
+<li>Throughput: ~100 requests/second</li>
+<li>P95 latency: 4+ minutes for 25,000 concurrent requests</li>
+<li><strong>Violates SLO by 2000x</strong></li>
+</ul>
+<p><strong>Optimistic locking (version numbers):</strong></p>
+<ul>
+<li>Retry amplification: 12.5x (96% failure rate)</li>
+<li>Total database load: 625,000 attempts/second</li>
+<li>P95 latency: ~250ms</li>
+<li><strong>Violates SLO by 2x</strong>, creates retry storms</li>
+</ul>
+<p>The system must handle <strong>25 decisions per millisecond</strong> (25,000 RPS) while maintaining <strong>ACID guarantees</strong> and <strong>zero oversell</strong>.</p>
+<hr>
+<h2 id="2-requirements">2. Requirements</h2>
+<h3 id="functional-requirements">Functional Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FR-1</td>
+<td>Product Availability Check</td>
+<td>Users can query real-time stock availability</td>
+</tr>
+<tr>
+<td>FR-2</td>
+<td>Reservation Creation</td>
+<td>Users can reserve 1 unit with atomic 2-minute hold</td>
+</tr>
+<tr>
+<td>FR-3</td>
+<td>Reservation Expiry</td>
+<td>Unreserved units automatically released after 2 minutes</td>
+</tr>
+<tr>
+<td>FR-4</td>
+<td>Checkout Processing</td>
+<td>Users can complete payment within reservation window</td>
+</tr>
+<tr>
+<td>FR-5</td>
+<td>Inventory Accuracy</td>
+<td>System prevents overselling (sold ≤ total stock)</td>
+</tr>
+<tr>
+<td>FR-6</td>
+<td>Audit Trail</td>
+<td>Complete event log for every state change</td>
+</tr>
+<tr>
+<td>FR-7</td>
+<td>Fair Distribution</td>
+<td>Prevent bot monopolization through rate limiting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="non-functional-requirements">Non-Functional Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Requirement</th>
+<th>Target</th>
+<th>Critical?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NFR-1</td>
+<td>Read Latency (P95)</td>
+<td>≤ 150ms</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-2</td>
+<td>Write Latency (P95)</td>
+<td>≤ 120ms</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-3</td>
+<td>Checkout Latency (P95)</td>
+<td>≤ 450ms</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-4</td>
+<td>Read Throughput</td>
+<td>250,000 RPS</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-5</td>
+<td>Write Throughput</td>
+<td>25,000 RPS</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-6</td>
+<td>Availability</td>
+<td>99.9% during event</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-7</td>
+<td>Data Consistency</td>
+<td>Strong (ACID)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-8</td>
+<td>Zero Oversell</td>
+<td>100% guarantee</td>
+<td><strong>Critical</strong></td>
+</tr>
+<tr>
+<td>NFR-9</td>
+<td>DDoS Protection</td>
+<td>Absorb 1M+ RPS attacks</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>NFR-10</td>
+<td>Cost Efficiency</td>
+<td>&lt; $50 per 30-min event</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="derived-requirements">Derived Requirements</h3>
+<p>Based on the above constraints, the system must achieve:</p>
+<ol>
+<li><strong>Throughput Requirement</strong>: Process <strong>275k total RPS</strong> (250k reads + 25k writes)</li>
+<li><strong>Latency Budget</strong>: <strong>40 microseconds</strong> per inventory decision (1000ms / 25,000 decisions)</li>
+<li><strong>Cache Hit Rate</strong>: <strong>&gt;99%</strong> to keep database load manageable</li>
+<li><strong>Consistency Guarantee</strong>: All reads reflect committed writes within cache TTL window</li>
+<li><strong>Bot Detection Accuracy</strong>: <strong>&gt;95%</strong> to ensure fair distribution</li>
+</ol>
+<hr>
+<h2 id="3-proposed-solution---high-level-overview">3. Proposed Solution - High Level Overview</h2>
+<h3 id="solution-approach">Solution Approach</h3>
+<p>We propose a <strong>multi-tier, event-driven architecture</strong> with the following key principles:</p>
+<h4 id="core-architectural-patterns">Core Architectural Patterns</h4>
+<p><strong>1. Serialization for Consistency</strong></p>
+<ul>
+<li><strong>Single-Writer Pattern</strong>: One Kafka consumer processes all inventory updates serially</li>
+<li><strong>Batch Processing</strong>: Process 250 requests per 10ms batch (achieves 25k RPS)</li>
+<li><strong>Eliminates Race Conditions</strong>: No optimistic/pessimistic locking needed</li>
+<li><strong>Guarantees Zero Oversell</strong>: Single source of truth, atomic operations</li>
+</ul>
+<p><strong>2. Aggressive Caching for Scalability</strong></p>
+<ul>
+<li><strong>Redis Master-Only Pattern</strong>: 200k RPS reads from Redis master (no replica staleness)</li>
+<li><strong>99% Cache Hit Rate</strong>: Only 2k RPS hits database</li>
+<li><strong>Immediate Invalidation</strong>: Cache updated on every inventory change</li>
+<li><strong>TTL Safety Net</strong>: 5-second TTL prevents indefinite staleness</li>
+</ul>
+<p><strong>3. Multi-Layer Rate Limiting for Fairness</strong></p>
+<ul>
+<li><strong>CDN Layer</strong>: Absorbs volumetric DDoS (1M+ RPS), per-IP limits (1000 req/min reads, 100 req/min writes)</li>
+<li><strong>API Gateway Layer</strong>: Behavioral analysis, device fingerprinting, tiered rate limits</li>
+<li><strong>Application Layer</strong>: Token bucket + FIFO queue ensures fair distribution</li>
+</ul>
+<p><strong>4. Event-Driven for Auditability</strong></p>
+<ul>
+<li><strong>Kafka Event Stream</strong>: Every state change published as event</li>
+<li><strong>Complete Audit Trail</strong>: Immutable log of all reservations, expirations, checkouts</li>
+<li><strong>Asynchronous Processing</strong>: Checkout, payment, notifications handled asynchronously</li>
+</ul>
+<p><strong>5. Three-Layer Redundancy for Reliability</strong></p>
+<ul>
+<li><strong>Reservation Expiry</strong>: Redis TTL (real-time) + Scheduled Job (periodic) + Event Stream (reactive)</li>
+<li><strong>Cache Failover</strong>: Redis cluster with automatic failover</li>
+<li><strong>Database Replication</strong>: Primary + async replicas for analytics</li>
+</ul>
+<h3 id="why-this-approach-works">Why This Approach Works</h3>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Traditional Approach</th>
+<th>Our Approach</th>
+<th>Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25k writes/sec to single row</td>
+<td>Row locks (100 req/sec)</td>
+<td>Kafka batching (25k req/sec)</td>
+<td><strong>250x faster</strong></td>
+</tr>
+<tr>
+<td>Race conditions</td>
+<td>Optimistic locking (96% retry)</td>
+<td>Single-writer (0% retry)</td>
+<td><strong>Eliminates retries</strong></td>
+</tr>
+<tr>
+<td>200k reads/sec</td>
+<td>Database (5k max)</td>
+<td>Redis cache (400k capable)</td>
+<td><strong>40x capacity</strong></td>
+</tr>
+<tr>
+<td>Bot attacks</td>
+<td>No protection</td>
+<td>Multi-layer rate limiting</td>
+<td><strong>95% bot detection</strong></td>
+</tr>
+<tr>
+<td>Cache staleness</td>
+<td>Eventual consistency</td>
+<td>Master-only reads + invalidation</td>
+<td><strong>Strong consistency</strong></td>
+</tr>
+<tr>
+<td>P95 latency</td>
+<td>250ms+</td>
+<td>60ms (write), 2ms (read)</td>
+<td><strong>4x better</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="success-metrics">Success Metrics</h3>
+<p>Upon successful implementation, the system will:</p>
+<ul>
+<li>✅ Handle 275k total RPS (250k reads + 25k writes)</li>
+<li>✅ Maintain P95 latency: 150ms reads, 120ms writes</li>
+<li>✅ Guarantee zero oversell through single-writer serialization</li>
+<li>✅ Achieve 99% cache hit rate for availability queries</li>
+<li>✅ Block 95%+ of bot traffic through multi-layer rate limiting</li>
+<li>✅ Complete 30-minute flash sale for under $15 infrastructure cost</li>
+</ul>
+<hr>
+<h2 id="4-system-architecture">4. System Architecture</h2>
+<h3 id="41-high-level-architecture-diagram">4.1 High-Level Architecture Diagram</h3>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────────────────┐
+│                         MILLIONS OF USERS                                │
+│                    (250k RPS reads + 25k RPS writes)                     │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                                 │
+┌────────────────────────────────v────────────────────────────────────────┐
+│                        CDN / DDoS Protection                             │
+│                         (Cloudflare / AWS Shield)                        │
+│                                                                           │
+│  • Absorbs DDoS attacks (1M+ RPS capability)                            │
+│  • Per-IP rate limits: Reads (1000/min), Writes (100/min)              │
+│  • 99% cache hit rate for static content                                │
+│  • Geographic routing to nearest region                                 │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                 ┌───────────────┼───────────────┐
+                 │               │               │
+                 ▼               ▼               ▼
+         ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+         │  Regional LB │ │  Regional LB │ │  Regional LB │
+         │     (US)     │ │     (EU)     │ │    (APAC)    │
+         └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+                │                │                │
+                └────────────────┼────────────────┘
+                                 │
+┌────────────────────────────────v────────────────────────────────────────┐
+│                           API Gateway                                    │
+│                     (Kong / AWS API Gateway)                             │
+│                                                                           │
+│  • Authentication &amp; JWT validation                                       │
+│  • Behavioral analysis &amp; bot detection                                   │
+│  • Tiered rate limiting (Tier 1-4)                                      │
+│  • Request validation &amp; enrichment                                       │
+└────────────────────────────────┬────────────────────────────────────────┘
+                                 │
+                 ┌───────────────┴───────────────┐
+                 │                               │
+                 ▼                               ▼
+    ┌────────────────────┐          ┌────────────────────┐
+    │   READ PATH        │          │   WRITE PATH       │
+    │  (250k RPS)        │          │   (25k RPS)        │
+    └─────────┬──────────┘          └─────────┬──────────┘
+              │                               │
+              ▼                               ▼
+┌──────────────────────────┐    ┌──────────────────────────────┐
+│   Redis Cache Cluster    │    │   Kafka Topic                │
+│   (Master-only reads)    │    │   (reservation-requests)     │
+│                          │    │   Single Partition           │
+│  • 200k RPS capacity     │    │   (maintains ordering)       │
+│  • Master: 225k ops/sec  │◄───┤                              │
+│  • Slave: Standby (HA)   │    │  • Producer: 25k msg/sec     │
+│  • 99% cache hit rate    │    │  • Retention: 24 hours       │
+│  • Sub-2ms latency       │    │  • Replication: 3x           │
+│                          │    └──────────┬───────────────────┘
+│  Key: stock:{sku_id}     │               │
+│  TTL: 5 seconds          │               │
+└──────────┬───────────────┘               ▼
+           │              ┌────────────────────────────────────┐
+           │              │  Single-Writer Consumer            │
+           │              │  (Inventory Update Processor)      │
+           │              │                                    │
+           │              │  • Poll batch: 250 requests        │
+           │              │  • Process: 10ms per batch         │
+           │              │  • Throughput: 25k RPS             │
+           │              │  • Atomic DB update per batch      │
+           │              └────────┬───────────────────────────┘
+           │                       │
+           │                       │ (Both read &amp; write)
+           │                       │
+           └───────────────────────┼────────────────────────────┐
+                                   ▼                            │
+                    ┌──────────────────────────────┐            │
+                    │     PostgreSQL Primary       │            │
+                    │    (Source of Truth)         │            │
+                    │                              │            │
+                    │  Tables:                     │            │
+                    │  • inventory                 │            │
+                    │  • reservations              │            │
+                    │  • orders                    │            │
+                    │                              │            │
+                    │  Features:                   │            │
+                    │  • ACID transactions         │            │
+                    │  • Strong consistency        │            │
+                    │  • Async replication         │            │
+                    └──────────┬───────────────────┘            │
+                               │                                │
+                               │ (Async replication)            │
+                               ▼                                │
+                    ┌─────────────────────┐                     │
+                    │  Read Replicas (3x) │                     │
+                    │  (Analytics only)   │                     │
+                    └─────────────────────┘                     │
+                                                                │
+┌───────────────────────────────────────────────────────────────┘
+│
+│ (Cache Invalidation)
+│
+▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                         Event Stream (Kafka)                            │
+│                                                                          │
+│  Topics:                                                                │
+│  • reservation.created  → Triggers cache invalidation                  │
+│  • reservation.expired  → Triggers stock release                       │
+│  • order.completed      → Triggers fulfillment                         │
+│  • inventory.updated    → Triggers CDN cache invalidation              │
+└────────────────────────────────────────────────────────────────────────┘
+
+
+┌────────────────────────────────────────────────────────────────────────┐
+│                      BACKGROUND JOBS &amp; SERVICES                         │
+│                                                                          │
+│  ┌──────────────────────┐  ┌──────────────────────┐                   │
+│  │  Expiry Scheduler    │  │  Checkout Service    │                   │
+│  │  (Every 10 seconds)  │  │  (Async processing)  │                   │
+│  │                      │  │                      │                   │
+│  │  • Query expired     │  │  • Payment gateway   │                   │
+│  │    reservations      │  │  • Order creation    │                   │
+│  │  • Release stock     │  │  • Inventory update  │                   │
+│  │  • Publish events    │  │  • Notifications     │                   │
+│  └──────────────────────┘  └──────────────────────┘                   │
+└────────────────────────────────────────────────────────────────────────┘
+</div></code></pre>
+<h3 id="42-request-flow">4.2 Request Flow</h3>
+<h4 id="read-path-product-availability-check">Read Path (Product Availability Check)</h4>
+<pre class="hljs"><code><div>User Request (GET /api/products/{sku}/availability)
+    │
+    ├─ CDN Layer: Check cache (99% hit) → Return cached response
+    │   └─ Cache miss: Forward to origin
+    │
+    ├─ API Gateway: Rate limit check (1000 req/min for authenticated)
+    │   └─ If exceeded: Return 429 + Retry-After
+    │
+    ├─ Application: Check Redis cache
+    │   ├─ Cache hit (99%): Return stock count (2ms latency)
+    │   └─ Cache miss (1%): Query PostgreSQL primary (10ms latency)
+    │
+    └─ Response: {&quot;sku_id&quot;: &quot;...&quot;, &quot;available&quot;: 5234, &quot;total&quot;: 10000}
+
+Total P95 Latency: ~2ms (cache hit), ~150ms (worst case with CDN miss)
+</div></code></pre>
+<h4 id="write-path-reservation-request">Write Path (Reservation Request)</h4>
+<pre class="hljs"><code><div>User Request (POST /api/reserve)
+    │
+    ├─ CDN Layer: Per-IP rate limit (100 req/min) → Forward if allowed
+    │
+    ├─ API Gateway:
+    │   ├─ Bot detection (behavioral analysis)
+    │   ├─ Tier assignment (Tier 1-4 based on risk score)
+    │   ├─ Token bucket check (100 req/min for Tier 3)
+    │   └─ If no tokens: Return 429 + Queue position
+    │
+    ├─ Application: Publish to Kafka
+    │   ├─ Topic: reservation-requests (single partition)
+    │   ├─ Message: {user_id, sku_id, idempotency_key, timestamp}
+    │   └─ Acknowledgment: Message accepted (1ms)
+    │
+    ├─ Kafka Consumer (Single-Writer):
+    │   ├─ Poll batch of 250 requests (every 10ms)
+    │   ├─ Validate each request (idempotency, user limits)
+    │   ├─ BEGIN TRANSACTION
+    │   │   ├─ Lock inventory row (SELECT FOR UPDATE)
+    │   │   ├─ Allocate units to valid requests
+    │   │   ├─ UPDATE inventory SET reserved_count += batch_allocated
+    │   │   ├─ INSERT INTO reservations (batch of allocations)
+    │   │   │   └─ expires_at = NOW() + 120 seconds
+    │   │   └─ COMMIT (atomic update, 10ms total)
+    │   │
+    │   ├─ Cache invalidation: REDIS.DEL(&quot;stock:{sku_id}&quot;)
+    │   ├─ Set Redis TTL: REDIS.SET(&quot;reservation:{id}&quot;, {...}, EX 120)
+    │   └─ Publish events: reservation.created (for each allocation)
+    │
+    └─ Response to User:
+        {
+          &quot;reservation_id&quot;: &quot;res-abc123&quot;,
+          &quot;status&quot;: &quot;RESERVED&quot;,
+          &quot;expires_at&quot;: &quot;2025-01-15T10:32:00Z&quot;,
+          &quot;expires_in_seconds&quot;: 120
+        }
+
+Total P95 Latency: ~60ms (5ms API + 1ms Kafka + 50ms queue wait + 10ms processing)
+</div></code></pre>
+<h4 id="reservation-expiry-flow-automatic">Reservation Expiry Flow (Automatic)</h4>
+<pre class="hljs"><code><div>Three-Layer Expiry System:
+
+Layer 1: Redis TTL (Real-time)
+    └─ Automatically deletes reservation:{id} after 120 seconds
+    └─ Latency: &lt;1ms
+    └─ Reliability: 99% (Redis-dependent)
+
+Layer 2: Scheduled Job (Every 10 seconds)
+    ├─ Query: SELECT * FROM reservations
+    │         WHERE expires_at &lt; NOW() AND status = 'RESERVED'
+    ├─ For each expired:
+    │   ├─ UPDATE reservations SET status = 'EXPIRED'
+    │   ├─ UPDATE inventory SET reserved_count -= 1
+    │   ├─ REDIS.DEL(&quot;stock:{sku_id}&quot;)
+    │   └─ PUBLISH reservation.expired event
+    └─ Max lag: 10 seconds after expiry
+
+Layer 3: Event Stream (Reactive)
+    └─ Subscribers listen to reservation.expired
+    └─ Trigger immediate cleanup actions
+    └─ No database polling needed
+</div></code></pre>
+<hr>
+<h2 id="5-key-design-decisions">5. Key Design Decisions</h2>
+<h3 id="decision-1-traffic-distribution-architecture">Decision 1: Traffic Distribution Architecture</h3>
+<p><strong>Problem:</strong> How to distribute 275k total RPS (250k reads + 25k writes) across infrastructure while maintaining low latency?</p>
+<p><strong>Solution:</strong> Three-tier load balancing with CDN edge caching</p>
+<p><strong>Architecture:</strong></p>
+<ul>
+<li><strong>CDN Layer (Cloudflare)</strong>: Absorbs 99% of read traffic at edge (990k RPS cache hits)</li>
+<li><strong>Regional Load Balancers</strong>: Distribute remaining 10k RPS across 3 regions (US, EU, APAC)</li>
+<li><strong>API Gateway</strong>: Rate limiting, authentication, request enrichment</li>
+</ul>
+<p><strong>Key Metrics:</strong></p>
+<ul>
+<li>CDN cache hit rate: 99%</li>
+<li>Origin traffic: 10k RPS (reduced from 1M potential)</li>
+<li>Geographic latency: &lt;50ms to nearest region</li>
+<li>DDoS protection: Included, handles 10M+ RPS attacks</li>
+</ul>
+<p><strong>Why Not Alternatives?</strong></p>
+<ul>
+<li>Single server: Cannot handle 275k RPS (capacity: ~20k RPS)</li>
+<li>Direct to API Gateway: Becomes bottleneck, no DDoS protection</li>
+<li>Service mesh (Istio): Adds 10ms+ latency per hop, violates SLO</li>
+</ul>
+<hr>
+<h3 id="decision-2-inventory-consistency-model">Decision 2: Inventory Consistency Model</h3>
+<p><strong>Problem:</strong> How to handle 25k concurrent writes to single inventory row without race conditions or oversell?</p>
+<p><strong>Solution:</strong> Single-Writer Pattern with Kafka batching</p>
+<p><strong>Architecture:</strong></p>
+<pre class="hljs"><code><div>25k reservation requests/sec
+    → Kafka topic (single partition for ordering)
+    → Single consumer processes batches of 250 requests
+    → Atomic database update per batch (10ms)
+    → Throughput: 250 requests / 10ms = 25k RPS ✓
+</div></code></pre>
+<p><strong>Key Benefits:</strong></p>
+<ul>
+<li><strong>No race conditions</strong>: Single consumer = single source of truth</li>
+<li><strong>Zero oversell guarantee</strong>: Atomic batch processing prevents double-allocation</li>
+<li><strong>High throughput</strong>: Batching achieves 25k RPS (vs 100 RPS with row locks)</li>
+<li><strong>Natural audit trail</strong>: Kafka log provides complete event history</li>
+</ul>
+<p><strong>Latency Breakdown:</strong></p>
+<ul>
+<li>Queue wait: ~50ms (P95, up to 5 batches ahead)</li>
+<li>Processing: ~10ms (database transaction)</li>
+<li><strong>Total P95: ~60ms</strong> (within 120ms SLO)</li>
+</ul>
+<p><strong>Why Not Alternatives?</strong></p>
+<ul>
+<li>Pessimistic locking: 100 RPS throughput, P95 latency 4+ minutes</li>
+<li>Optimistic locking: 96% retry rate, 12.5x database amplification</li>
+<li>Distributed locks (Redis): Still serializes access, no throughput gain</li>
+<li>Sharded inventory: Race conditions between shards, oversell risk</li>
+</ul>
+<hr>
+<h3 id="decision-3-cache-architecture-for-read-scalability">Decision 3: Cache Architecture for Read Scalability</h3>
+<p><strong>Problem:</strong> Database capacity is 5k RPS, but we need 200k RPS for availability checks.</p>
+<p><strong>Solution:</strong> Redis Cluster with master-only reads and immediate invalidation</p>
+<p><strong>Architecture:</strong></p>
+<pre class="hljs"><code><div>Redis Cluster Configuration:
+- Master handles: 200k reads + 25k invalidations = 225k RPS
+- Instance: r6g.4xlarge (400k+ ops/sec capacity, 56% utilization)
+- Slaves: Standby for HA only (not serving traffic)
+- TTL: 5 seconds (safety net for stale data)
+- Invalidation: Immediate on every inventory update
+</div></code></pre>
+<p><strong>Why Master-Only Reads?</strong></p>
+<ul>
+<li><strong>Replication lag risk</strong>: Slave lag of 10-100ms typical</li>
+<li><strong>Staleness impact</strong>: At 200k RPS, 10ms lag = 2,000 users see stale data</li>
+<li><strong>Consistency requirement</strong>: Zero oversell means cannot tolerate stale reads</li>
+<li><strong>Capacity sufficient</strong>: Single master handles 400k+ ops/sec, well above 225k needed</li>
+</ul>
+<p><strong>Key Metrics:</strong></p>
+<ul>
+<li>Cache hit rate: 99%</li>
+<li>Cache latency: 2ms (P95)</li>
+<li>Cache miss latency: 10ms (fallback to database)</li>
+<li>Database read load: 2k RPS (1% miss rate)</li>
+</ul>
+<p><strong>Why Not Alternatives?</strong></p>
+<ul>
+<li>Direct to database: 5k RPS max, need 200k (40x insufficient)</li>
+<li>Master-slave with read replicas: Replication lag causes stale reads, oversell risk</li>
+<li>Memcached: No pub/sub for invalidation, no persistence</li>
+<li>DynamoDB: $18,875 per 30-min event (100x more expensive)</li>
+</ul>
+<hr>
+<h3 id="decision-4-rate-limiting-strategy">Decision 4: Rate Limiting Strategy</h3>
+<p><strong>Problem:</strong> Prevent bot attacks while allowing 275k RPS legitimate traffic (250k reads + 25k writes).</p>
+<p><strong>Solution:</strong> Multi-layer rate limiting with endpoint-specific thresholds</p>
+<p><strong>Layer 1: CDN/Edge (Absorb volumetric DDoS)</strong></p>
+<pre class="hljs"><code><div>Read endpoints:
+- Per-IP: 1,000 req/min (16 req/sec) - allows refreshing
+- Global: 500k RPS (2x headroom)
+- Result: Bot doing 100 req/sec blocked at edge
+
+Write endpoints:
+- Per-IP: 100 req/min (1.67 req/sec) - prevents rapid-fire
+- Global: 50k RPS (2x headroom)
+- Challenge: CAPTCHA for suspicious patterns
+</div></code></pre>
+<p><strong>Layer 2: API Gateway (Behavioral analysis)</strong></p>
+<pre class="hljs"><code><div>Bot detection signals:
+- Regular intervals (0.1s, 0.1s, 0.1s) vs irregular human timing
+- No session history (direct POST /reserve)
+- Headless browser fingerprints
+- VPN/proxy IP addresses
+
+Tiered rate limits:
+- Tier 1 (suspected bot): 1 req/min
+- Tier 2 (new user): 50 req/min
+- Tier 3 (verified user): 100 req/min
+- Tier 4 (premium user): 200 req/min
+</div></code></pre>
+<p><strong>Layer 3: Application (Token bucket + FIFO queue)</strong></p>
+<pre class="hljs"><code><div>- Each user gets token budget (replenishes every second)
+- Requests consume tokens
+- No tokens? → Queue in FIFO order
+- Fair distribution: Speed doesn't matter, FIFO guarantees fairness
+</div></code></pre>
+<p><strong>Attack Mitigation Examples:</strong></p>
+<ul>
+<li><strong>1M RPS volumetric DDoS</strong>: CDN absorbs 990k RPS (99% cache hit), origin sees 10k RPS ✓</li>
+<li><strong>100k RPS distributed bot attack</strong>: CDN blocks 83k RPS (per-IP limits), API Gateway downgrades remaining to Tier 1 (1 req/min) ✓</li>
+<li><strong>Slowloris attack</strong>: Connection timeout at CDN (10 seconds), origin never sees slow connections ✓</li>
+</ul>
+<p><strong>Why Not Alternatives?</strong></p>
+<ul>
+<li>No rate limiting: Bots monopolize queue (99% bot traffic), unfair to humans</li>
+<li>Simple per-IP only: Ineffective against distributed botnets (1000s of IPs)</li>
+<li>Leaky bucket: Too restrictive for flash sale bursts</li>
+</ul>
+<hr>
+<h3 id="decision-5-database-consistency-model">Decision 5: Database Consistency Model</h3>
+<p><strong>Problem:</strong> Choose database consistency model that guarantees zero oversell.</p>
+<p><strong>Solution:</strong> PostgreSQL with strong consistency (single primary + async replicas)</p>
+<p><strong>Architecture:</strong></p>
+<pre class="hljs"><code><div>Primary Database (PostgreSQL):
+- All writes go here (source of truth)
+- Strong consistency (ACID transactions)
+- Capacity: 25k batch writes/sec (250 requests per 10ms batch)
+
+Read Replicas (3x):
+- Async replication (10-100ms lag)
+- Used for analytics only (not user-facing reads)
+- User-facing reads: Redis cache (99%) or primary (1%)
+</div></code></pre>
+<p><strong>Why Strong Consistency?</strong></p>
+<ul>
+<li><strong>Zero oversell requirement</strong>: Cannot tolerate eventual consistency</li>
+<li><strong>Legal/compliance</strong>: Overselling = breach of contract, legal liability</li>
+<li><strong>Example</strong>: With eventual consistency, two users could reserve last unit</li>
+</ul>
+<p><strong>Why Not Alternatives?</strong></p>
+<ul>
+<li>Eventually consistent (Cassandra, DynamoDB): Inconsistency window → oversell risk</li>
+<li>Quorum-based (CockroachDB): Higher latency (slowest node), more expensive</li>
+<li>Multi-master: Conflict resolution complex, oversell risk during split-brain</li>
+</ul>
+<hr>
+<h3 id="decision-6-reservation-expiry-system">Decision 6: Reservation Expiry System</h3>
+<p><strong>Problem:</strong> Auto-release units after 2-minute reservation window expires.</p>
+<p><strong>Solution:</strong> Three-layer expiry system for redundancy</p>
+<p><strong>Layer 1: Redis TTL (Real-time)</strong></p>
+<pre class="hljs"><code><div>- SET reservation:{id} {...} EX 120
+- Automatic deletion after 120 seconds
+- Latency: &lt;1ms
+- Reliability: 99% (Redis-dependent)
+</div></code></pre>
+<p><strong>Layer 2: Scheduled Cleanup (Every 10 seconds)</strong></p>
+<pre class="hljs"><code><div><span class="hljs-meta">@Scheduled</span>(fixedRate = <span class="hljs-number">10000</span>)
+SELECT * FROM reservations WHERE expires_at &lt; NOW()
+For each expired:
+    - UPDATE reservations SET status = <span class="hljs-string">'EXPIRED'</span>
+    - UPDATE inventory SET reserved_count -= <span class="hljs-number">1</span>
+    - REDIS.DEL(<span class="hljs-string">"stock:{sku_id}"</span>)
+    - PUBLISH reservation.expired event
+Max lag: <span class="hljs-number">10</span> seconds
+</div></code></pre>
+<p><strong>Layer 3: Event Stream (Reactive)</strong></p>
+<pre class="hljs"><code><div>- reservation.expired event published to Kafka
+- Subscribers handle cleanup immediately
+- No polling, event-driven
+</div></code></pre>
+<p><strong>Redundancy Guarantee:</strong></p>
+<ul>
+<li>If Redis fails → Scheduled job catches expiry (10s lag)</li>
+<li>If scheduler fails → Event stream still publishes</li>
+<li>If Kafka fails → Scheduled job still runs</li>
+<li><strong>Result: Guaranteed stock release even with component failures</strong></li>
+</ul>
+<p><strong>Latency Impact:</strong> Zero (no additional latency added to reservation path)</p>
+<hr>
+<h2 id="6-performance-analysis">6. Performance Analysis</h2>
+<h3 id="61-latency-breakdown">6.1 Latency Breakdown</h3>
+<h4 id="read-request-get-availability">Read Request (GET /availability)</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Latency (P95)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CDN Cache Hit</td>
+<td>20ms</td>
+<td>99% of requests</td>
+</tr>
+<tr>
+<td>CDN → Origin (miss)</td>
+<td>50ms</td>
+<td>Geographic routing</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>5ms</td>
+<td>Rate limit check, auth</td>
+</tr>
+<tr>
+<td>Redis Cache Hit</td>
+<td>2ms</td>
+<td>Master read</td>
+</tr>
+<tr>
+<td>Database (cache miss)</td>
+<td>10ms</td>
+<td>1% of requests</td>
+</tr>
+<tr>
+<td><strong>Total (cache hit)</strong></td>
+<td><strong>20ms</strong></td>
+<td>Within 150ms SLO ✓</td>
+</tr>
+<tr>
+<td><strong>Total (cache miss)</strong></td>
+<td><strong>70ms</strong></td>
+<td>Within 150ms SLO ✓</td>
+</tr>
+</tbody>
+</table>
+<h4 id="write-request-post-reserve">Write Request (POST /reserve)</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Latency (P95)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API Gateway</td>
+<td>5ms</td>
+<td>Rate limit, bot detection</td>
+</tr>
+<tr>
+<td>Kafka Producer</td>
+<td>1ms</td>
+<td>Message published</td>
+</tr>
+<tr>
+<td>Queue Wait</td>
+<td>50ms</td>
+<td>5 pending batches (P95)</td>
+</tr>
+<tr>
+<td>Batch Processing</td>
+<td>10ms</td>
+<td>250 requests, DB transaction</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>66ms</strong></td>
+<td>Within 120ms SLO ✓</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Queue Wait Calculation:</strong></p>
+<pre class="hljs"><code><div>At P95 load, ~5 batches pending in queue
+5 batches × 10ms per batch = 50ms queue wait
++ 10ms processing = 60ms total
+Headroom: 120ms SLO - 60ms actual = 60ms buffer ✓
+</div></code></pre>
+<h3 id="62-throughput-analysis">6.2 Throughput Analysis</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Target</th>
+<th>Achieved</th>
+<th>Headroom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read RPS</td>
+<td>250,000</td>
+<td>400,000+</td>
+<td>60%</td>
+</tr>
+<tr>
+<td>Write RPS</td>
+<td>25,000</td>
+<td>25,000</td>
+<td>0% (batching limit)</td>
+</tr>
+<tr>
+<td>Cache ops/sec</td>
+<td>225,000</td>
+<td>400,000+</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>Database writes/sec</td>
+<td>100 batches</td>
+<td>100 batches</td>
+<td>0% (single-writer limit)</td>
+</tr>
+<tr>
+<td>CDN edge capacity</td>
+<td>1M+</td>
+<td>10M+</td>
+<td>90%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bottlenecks:</strong></p>
+<ul>
+<li>
+<p><strong>Write throughput</strong>: Limited by single-writer pattern (25k RPS max with 10ms batches)</p>
+<ul>
+<li>Mitigation: Cannot horizontally scale (would break ordering)</li>
+<li>Acceptable: Meets requirement exactly</li>
+</ul>
+</li>
+<li>
+<p><strong>Database connection pool</strong>: ~80 connections under load (max 200 available)</p>
+<ul>
+<li>Mitigation: Connection pooling, query optimization</li>
+<li>Acceptable: 60% headroom</li>
+</ul>
+</li>
+</ul>
+<h3 id="63-cache-performance">6.3 Cache Performance</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Achieved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cache hit rate</td>
+<td>95%</td>
+<td>99%</td>
+</tr>
+<tr>
+<td>Cache latency (P95)</td>
+<td>&lt;5ms</td>
+<td>2ms</td>
+</tr>
+<tr>
+<td>Cache capacity</td>
+<td>225k ops/sec</td>
+<td>400k+ ops/sec</td>
+</tr>
+<tr>
+<td>Invalidation latency</td>
+<td>&lt;10ms</td>
+<td>1ms</td>
+</tr>
+<tr>
+<td>Stale read window</td>
+<td>0ms (strong consistency)</td>
+<td>0ms (master-only)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="64-scalability-limits">6.4 Scalability Limits</h3>
+<p><strong>Current Architecture Supports:</strong></p>
+<ul>
+<li>✅ 250k RPS reads (limited by Redis: 400k capable)</li>
+<li>✅ 25k RPS writes (limited by batch processing: 10ms per batch)</li>
+<li>✅ 10,000 units sold in 25 seconds (400 units/sec depletion rate)</li>
+</ul>
+<p><strong>To Scale Beyond 25k Writes:</strong></p>
+<ul>
+<li>Option 1: Reduce batch processing time to 5ms → 50k RPS (database optimization)</li>
+<li>Option 2: Pre-shard inventory (10 shards × 1,000 units each) → 250k RPS
+<ul>
+<li>⚠️ Risk: Requires careful partitioning to avoid cross-shard oversell</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="7-cost-estimation">7. Cost Estimation</h2>
+<h3 id="71-infrastructure-costs-30-minute-event">7.1 Infrastructure Costs (30-minute event)</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Specification</th>
+<th>Hourly Cost</th>
+<th>Event Cost (1 hour)</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compute (Kubernetes)</strong></td>
+<td>5 × m5.2xlarge nodes</td>
+<td>$3.60</td>
+<td>$3.60</td>
+<td>Pre-scaled 30 min early</td>
+</tr>
+<tr>
+<td><strong>Database (PostgreSQL)</strong></td>
+<td>r6g.xlarge primary + 3 replicas</td>
+<td>$0.78</td>
+<td>$0.78</td>
+<td>Managed RDS</td>
+</tr>
+<tr>
+<td><strong>Cache (Redis)</strong></td>
+<td>3 masters + 3 slaves (r6g.large)</td>
+<td>$1.73</td>
+<td>$1.73</td>
+<td>ElastiCache cluster</td>
+</tr>
+<tr>
+<td><strong>Load Balancer</strong></td>
+<td>3 regional NLBs</td>
+<td>$0.02</td>
+<td>$0.02</td>
+<td>Minimal cost</td>
+</tr>
+<tr>
+<td><strong>API Gateway</strong></td>
+<td>275k RPS × 30 sec = 8.25M requests</td>
+<td>-</td>
+<td>$28.88</td>
+<td>Pay per request</td>
+</tr>
+<tr>
+<td><strong>CDN (Cloudflare)</strong></td>
+<td>Pro plan + 450M requests</td>
+<td>-</td>
+<td>$470.00</td>
+<td>Includes DDoS protection</td>
+</tr>
+<tr>
+<td><strong>Message Queue (Kafka)</strong></td>
+<td>3 brokers (MSK)</td>
+<td>$0.34</td>
+<td>$0.34</td>
+<td>Managed Kafka</td>
+</tr>
+<tr>
+<td><strong>Monitoring (Datadog)</strong></td>
+<td>5 hosts × 1.5 hours</td>
+<td>$0.37</td>
+<td>$0.37</td>
+<td>APM + logs</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td></td>
+<td></td>
+<td><strong>$505.72</strong></td>
+<td>For 30-min event</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cost Breakdown:</strong></p>
+<ul>
+<li>CDN dominates: $470 (93% of total)</li>
+<li>Infrastructure: $35 (7% of total)</li>
+</ul>
+<p><strong>Cost Optimization Options:</strong></p>
+<ul>
+<li>Use AWS CloudFront instead of Cloudflare: $413 (saves $57)</li>
+<li>Self-hosted Kafka instead of MSK: Saves $0.34 (negligible)</li>
+<li><strong>Optimized Total: ~$448 per event</strong></li>
+</ul>
+<h3 id="72-operational-costs">7.2 Operational Costs</h3>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>Time Required</th>
+<th>Cost @ $80/hr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Planning &amp; design</td>
+<td>12 eng-hours</td>
+<td>$960</td>
+</tr>
+<tr>
+<td>Implementation</td>
+<td>80 eng-hours</td>
+<td>$6,400</td>
+</tr>
+<tr>
+<td>Testing &amp; QA</td>
+<td>20 eng-hours</td>
+<td>$1,600</td>
+</tr>
+<tr>
+<td>Event monitoring (live)</td>
+<td>2 eng-hours</td>
+<td>$160</td>
+</tr>
+<tr>
+<td>Post-event analysis</td>
+<td>4 eng-hours</td>
+<td>$320</td>
+</tr>
+<tr>
+<td><strong>Total Engineering</strong></td>
+<td><strong>118 hours</strong></td>
+<td><strong>$9,440</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>One-Time Setup:</strong> $8,960 (planning + implementation + testing)
+<strong>Per-Event:</strong> $480 (monitoring + analysis)</p>
+<h3 id="73-business-value-analysis">7.3 Business Value Analysis</h3>
+<p><strong>Revenue per Event:</strong></p>
+<pre class="hljs"><code><div>10,000 units × $200 average price = $2,000,000 revenue
+Gross margin @ 50% = $1,000,000 profit
+</div></code></pre>
+<p><strong>Cost as % of Revenue:</strong></p>
+<pre class="hljs"><code><div>Infrastructure: $450 / $2M = 0.02% of revenue
+Engineering (per-event): $480 / $2M = 0.024% of revenue
+Total: 0.044% of revenue
+</div></code></pre>
+<p><strong>ROI:</strong></p>
+<ul>
+<li><strong>Investment</strong>: $9,440 one-time + $450 per event</li>
+<li><strong>Return</strong>: $1M profit per event</li>
+<li><strong>Break-even</strong>: First successful event</li>
+<li><strong>Ongoing</strong>: 0.044% of revenue (excellent efficiency)</li>
+</ul>
+<hr>
+<h2 id="8-operational-considerations">8. Operational Considerations</h2>
+<h3 id="81-pre-event-checklist-t-1-hour">8.1 Pre-Event Checklist (T-1 hour)</h3>
+<p><strong>Infrastructure Readiness:</strong></p>
+<ul>
+<li>✅ Kubernetes cluster scaled to 50% capacity</li>
+<li>✅ Redis cluster healthy (3 masters + 3 slaves)</li>
+<li>✅ PostgreSQL primary + replicas synchronized (lag &lt;50ms)</li>
+<li>✅ Kafka brokers online, topic created with correct partitions</li>
+<li>✅ CDN caches warmed with product data</li>
+<li>✅ API Gateway instances ready (no cold starts)</li>
+</ul>
+<p><strong>Data Preparation:</strong></p>
+<ul>
+<li>✅ Inventory record exists: <code>sku_id, total_stock=10000, reserved=0, sold=0</code></li>
+<li>✅ Product metadata loaded in Redis</li>
+<li>✅ No existing reservations for SKU</li>
+<li>✅ User tiers pre-computed</li>
+<li>✅ Rate limit state cleared (fresh start)</li>
+</ul>
+<p><strong>Monitoring Setup:</strong></p>
+<ul>
+<li>✅ Dashboard visible with key metrics</li>
+<li>✅ Alerting rules validated</li>
+<li>✅ On-call pager tested</li>
+<li>✅ War room channel opened</li>
+</ul>
+<h3 id="82-during-event-monitoring-t0-to-t030-min">8.2 During-Event Monitoring (T0 to T0+30 min)</h3>
+<p><strong>Critical Metrics to Watch:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Alert Threshold</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oversell_count</td>
+<td>0</td>
+<td>&gt;0</td>
+<td><strong>IMMEDIATE ESCALATION</strong></td>
+</tr>
+<tr>
+<td>request_rate</td>
+<td>275k RPS</td>
+<td>&gt;300k RPS</td>
+<td>Verify DDoS protection</td>
+</tr>
+<tr>
+<td>p95_latency_reads</td>
+<td>&lt;150ms</td>
+<td>&gt;200ms</td>
+<td>Check cache hit rate</td>
+</tr>
+<tr>
+<td>p95_latency_writes</td>
+<td>&lt;120ms</td>
+<td>&gt;150ms</td>
+<td>Check queue depth</td>
+</tr>
+<tr>
+<td>cache_hit_rate</td>
+<td>&gt;99%</td>
+<td>&lt;95%</td>
+<td>Check invalidation logic</td>
+</tr>
+<tr>
+<td>queue_depth</td>
+<td>&lt;100k</td>
+<td>&gt;500k</td>
+<td>Consumer falling behind</td>
+</tr>
+<tr>
+<td>error_rate</td>
+<td>&lt;0.1%</td>
+<td>&gt;1%</td>
+<td>Investigate errors</td>
+</tr>
+<tr>
+<td>stock_depletion_rate</td>
+<td>400 units/sec</td>
+<td>Deviates ±20%</td>
+<td>Verify allocation logic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Real-Time Actions:</strong></p>
+<pre class="hljs"><code><div>T-30s: Pre-warm caches, scale pods to 100%
+T0: Sale starts, monitor request ramp-up
+T0-3s: Initial spike, verify auto-scaling triggers
+T0+25s: ~10,000 units sold, announce &quot;sold out&quot;
+T0+30m: Begin scale-down, process pending checkouts
+</div></code></pre>
+<h3 id="83-post-event-analysis">8.3 Post-Event Analysis</h3>
+<p><strong>Data to Collect:</strong></p>
+<ul>
+<li>Total requests served (reads + writes)</li>
+<li>P95/P99 latency by endpoint</li>
+<li>Cache hit rate over time</li>
+<li>Bot detection accuracy (Tier 1 assignments)</li>
+<li>Revenue generated</li>
+<li>Oversell incidents (target: 0)</li>
+<li>System errors and root causes</li>
+</ul>
+<p><strong>Metrics for Improvement:</strong></p>
+<ul>
+<li>Which rate limits were hit most frequently?</li>
+<li>Were any legitimate users incorrectly flagged as bots?</li>
+<li>Did queue depth ever exceed thresholds?</li>
+<li>What was actual peak RPS vs. estimated?</li>
+</ul>
+<h3 id="84-runbooks-for-failure-scenarios">8.4 Runbooks for Failure Scenarios</h3>
+<p><strong>Scenario 1: Oversell Detected</strong></p>
+<pre class="hljs"><code><div>1. STOP accepting new reservations (return 503)
+2. Page on-call immediately
+3. Determine which orders to refund (last N orders)
+4. Initiate refund API calls
+5. Send customer notifications
+6. Root cause analysis (code bug? race condition?)
+</div></code></pre>
+<p><strong>Scenario 2: Database Primary Failure</strong></p>
+<pre class="hljs"><code><div>1. Automatic failover to replica (30-300ms downtime)
+2. Verify new primary accepting writes
+3. Check replication to remaining replicas
+4. Monitor application for errors
+5. If prolonged outage: Return 503, notify users
+</div></code></pre>
+<p><strong>Scenario 3: Redis Cluster Failure</strong></p>
+<pre class="hljs"><code><div>1. All requests fall back to PostgreSQL (slower but correct)
+2. Monitor database load (should stay under 5k RPS)
+3. If database overloaded: Enable aggressive rate limiting
+4. Restart Redis cluster
+5. Warm cache from database before resuming
+</div></code></pre>
+<p><strong>Scenario 4: Kafka Consumer Lag Growing</strong></p>
+<pre class="hljs"><code><div>1. Check batch processing time (should be ~10ms)
+2. Verify database query performance
+3. If database slow: Optimize queries, add indexes
+4. If consumer bug: Deploy hotfix
+5. If unfixable: Increase batch size to 500 (reduces latency SLO)
+</div></code></pre>
+<h3 id="85-team-skillset-requirements">8.5 Team Skillset Requirements</h3>
+<p><strong>Critical Roles:</strong></p>
+<ul>
+<li><strong>Backend Engineer (3-4)</strong>: Java/Spring Boot, Kafka, distributed systems</li>
+<li><strong>DevOps/SRE (2-3)</strong>: Kubernetes, monitoring, incident response</li>
+<li><strong>Database Engineer (1-2)</strong>: PostgreSQL tuning, replication, backup/restore</li>
+<li><strong>QA Engineer (1-2)</strong>: Load testing, chaos engineering, stress testing</li>
+</ul>
+<p><strong>Knowledge Gaps to Address:</strong></p>
+<ul>
+<li>Distributed systems patterns (event sourcing, idempotency)</li>
+<li>Performance profiling and optimization</li>
+<li>Chaos engineering and failure testing</li>
+<li>Operational runbooks and incident response</li>
+</ul>
+<hr>
+<h2 id="appendix-a-alternative-approaches-considered">Appendix A: Alternative Approaches Considered</h2>
+<h3 id="a1-decision-1-load-distribution">A.1 Decision 1: Load Distribution</h3>
+<p><strong>Option A: Single Server</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Cannot handle 275k RPS (max capacity ~20k RPS)</li>
+<li>Single point of failure, no geographic distribution</li>
+</ul>
+<p><strong>Option B: Multiple Servers + Regional LBs (SELECTED)</strong></p>
+<ul>
+<li>Three-tier: CDN → Regional LBs → API Gateway → Services</li>
+<li>Handles 275k RPS with 60% headroom</li>
+<li>DDoS protection at CDN layer</li>
+</ul>
+<p><strong>Option C: Anycast DNS + BGP Routing</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Overkill complexity, requires BGP expertise</li>
+<li>Same benefits as Option B with higher operational cost</li>
+</ul>
+<hr>
+<h3 id="a2-decision-2-inventory-consistency">A.2 Decision 2: Inventory Consistency</h3>
+<p><strong>Option A: Pessimistic Locking (Row Locks)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Throughput 100 RPS, P95 latency 4 minutes</li>
+<li>Serializes all access, queue builds up exponentially</li>
+</ul>
+<p><strong>Option B: Optimistic Locking (Version Numbers)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: 96% retry rate, 12.5x database amplification</li>
+<li>P99 latency 250ms (violates 120ms SLO)</li>
+<li>Retry storms under high contention</li>
+</ul>
+<p><strong>Option C: Distributed Lock (Redis SETNX)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Still serializes access like pessimistic locking</li>
+<li>No throughput improvement, adds Redis dependency</li>
+</ul>
+<p><strong>Option D: Single-Writer Pattern (Kafka) (SELECTED)</strong></p>
+<ul>
+<li>Achieves 25k RPS through batching (250 requests per 10ms)</li>
+<li>No race conditions, zero oversell guarantee</li>
+<li>P95 latency 60ms (within SLO)</li>
+</ul>
+<p><strong>Option E: Sharded Inventory</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Race conditions between shards</li>
+<li>Example: Shard A reserves last unit, Shard B doesn't know → oversell</li>
+<li>Too risky for zero-oversell requirement</li>
+</ul>
+<hr>
+<h3 id="a3-decision-3-cache-architecture">A.3 Decision 3: Cache Architecture</h3>
+<p><strong>Option A: No Cache (Direct to Database)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Database capacity 5k RPS, need 200k RPS (40x insufficient)</li>
+<li>P95 latency &gt;30 seconds under load</li>
+</ul>
+<p><strong>Option B: Single Redis Instance</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Capacity ~100k RPS, need 225k RPS</li>
+<li>Single point of failure, no HA</li>
+</ul>
+<p><strong>Option C: Redis Master-Slave Replication</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Replication lag 10-100ms causes stale reads</li>
+<li>At 200k RPS, even 10ms lag = 2,000 users see stale data</li>
+<li>Oversell risk if reading from stale replica</li>
+</ul>
+<p><strong>Option D: Redis Cluster (Master-Only Reads) (SELECTED)</strong></p>
+<ul>
+<li>Master handles 225k RPS (400k capable, 56% utilization)</li>
+<li>Slaves for HA only (standby for failover)</li>
+<li>Strong consistency (no replication lag issues)</li>
+</ul>
+<p><strong>Option E: Memcached</strong></p>
+<ul>
+<li><strong>Rejected</strong>: No pub/sub for invalidation</li>
+<li>Must rely on TTL expiration (stale data window)</li>
+</ul>
+<p><strong>Option F: DynamoDB</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Cost $18,875 per 30-min event (100x more expensive)</li>
+<li>Latency 25ms+ for strong consistency reads</li>
+</ul>
+<hr>
+<h3 id="a4-decision-4-rate-limiting">A.4 Decision 4: Rate Limiting</h3>
+<p><strong>Option A: No Rate Limiting</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Bots monopolize queue (99% bot traffic)</li>
+<li>Unfair to legitimate users, queue grows unbounded</li>
+</ul>
+<p><strong>Option B: Simple Per-IP Rate Limit</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Ineffective against distributed botnets (1000s of IPs)</li>
+<li>Shared IPs (university, corporate) unfairly rate limited together</li>
+</ul>
+<p><strong>Option C: Multi-Dimensional Rate Limiting</strong></p>
+<ul>
+<li>Good but not sufficient alone</li>
+<li>Cannot guarantee fairness without queue</li>
+</ul>
+<p><strong>Option D: Token Bucket + FIFO Queue (SELECTED)</strong></p>
+<ul>
+<li>Fair distribution: Speed doesn't matter, FIFO guarantees fairness</li>
+<li>Bots and humans get same token allocation</li>
+<li>Queue prevents system collapse</li>
+</ul>
+<p><strong>Option E: Leaky Bucket</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Too restrictive for flash sale bursts</li>
+<li>Constant drain rate rejects legitimate initial spike</li>
+</ul>
+<hr>
+<h3 id="a5-decision-5-database-consistency">A.5 Decision 5: Database Consistency</h3>
+<p><strong>Option A: Eventually Consistent (Cassandra, DynamoDB)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Inconsistency window → oversell risk</li>
+<li>Example: Two users reserve last unit during replication lag</li>
+</ul>
+<p><strong>Option B: Strong Consistency (PostgreSQL) (SELECTED)</strong></p>
+<ul>
+<li>ACID transactions prevent oversell</li>
+<li>Single primary for writes (source of truth)</li>
+<li>Proven at scale (GitHub, Shopify)</li>
+</ul>
+<p><strong>Option C: Quorum-Based (CockroachDB)</strong></p>
+<ul>
+<li><strong>Rejected</strong>: Higher latency (slowest node in quorum)</li>
+<li>More expensive ($300+/month minimum)</li>
+<li>Overkill for single-region deployment</li>
+</ul>
+<hr>
+<h2 id="appendix-b-queue-wait-time-analysis">Appendix B: Queue Wait Time Analysis</h2>
+<h3 id="the-question">The Question</h3>
+<p>In the Single-Writer Pattern, the document states:</p>
+<pre class="hljs"><code><div>P95 latency:
+- Queue wait: ~50ms
+- Processing: 10ms
+- Total: ~60ms ✓
+</div></code></pre>
+<p>How is <strong>queue wait time of ~50ms</strong> derived?</p>
+<h3 id="system-parameters">System Parameters</h3>
+<pre class="hljs"><code><div>Peak load: 25,000 requests/second (RPS)
+Batch size: 250 requests per batch
+Batch processing time: 10ms per batch
+Batches per second: 25,000 / 250 = 100 batches/second
+Batch interval: 1000ms / 100 = 10ms between batch starts
+</div></code></pre>
+<h3 id="calculation-method">Calculation Method</h3>
+<p><strong>At P95 Load (95th percentile of requests):</strong></p>
+<p>Under realistic burst conditions, a request typically encounters <strong>5 other batches</strong> ahead of it in the queue.</p>
+<p><strong>Why 5 batches?</strong></p>
+<ul>
+<li>During traffic bursts, requests don't arrive perfectly uniformly</li>
+<li>At P95, approximately 1,250-1,500 requests arrive in a burst</li>
+<li>This represents: 1,250 requests / 250 per batch = 5 batches</li>
+<li>Latest request in burst must wait for all 5 batches ahead</li>
+</ul>
+<p><strong>Queue Wait Calculation:</strong></p>
+<pre class="hljs"><code><div>Queue wait = Number of pending batches × Time per batch
+           = 5 batches × 10ms/batch
+           = 50ms
+</div></code></pre>
+<h3 id="validation">Validation</h3>
+<p><strong>Burst Capacity Check:</strong></p>
+<pre class="hljs"><code><div>Total requests per second: 25,000
+If all arrive at once: 25,000 / 250 = 100 batches queued
+Time to process all: 100 × 10ms = 1,000ms (1 second)
+
+P95 means: 95% of requests handled within 50ms
+Only 5% (1,250 requests) experience worst-case queueing
+These might wait: 5-10 batches = 50-100ms
+
+50ms is conservative for P95 ✓
+</div></code></pre>
+<p><strong>SLO Compliance Check:</strong></p>
+<pre class="hljs"><code><div>SLO: P95 ≤ 120ms
+Calculated: 60ms (queue 50ms + processing 10ms)
+Headroom: 60ms / 120ms = 50% of budget ✓
+
+Leaves room for:
+- Network latency: 20ms
+- API Gateway: 10ms
+- Other overhead: 30ms
+- Total: 60ms + 60ms = 120ms ✓ (exactly meets SLO)
+</div></code></pre>
+<h3 id="worst-case-p99">Worst Case (P99)</h3>
+<p>At P99, queue wait could be:</p>
+<pre class="hljs"><code><div>P99 latency: 200-300ms
+- 20-30 batches in queue
+- Processing time: 200-300ms total
+
+But P95 is the SLO target, not P99.
+Architecture focuses on meeting P95 ≤ 120ms.
+</div></code></pre>
+<hr>
+<h2 id="appendix-c-risk--failure-mode-analysis">Appendix C: Risk &amp; Failure Mode Analysis</h2>
+<h3 id="critical-risk-1-oversell-detection">Critical Risk 1: Oversell Detection</h3>
+<p><strong>Risk</strong>: Despite single-writer pattern, oversell occurs (sold &gt; 10,000 units)</p>
+<p><strong>Likelihood</strong>: Very low (~0.01%) if correctly implemented
+<strong>Impact</strong>: Very high (legal liability, refunds, reputation damage)</p>
+<p><strong>Root Causes:</strong></p>
+<ol>
+<li>Bug in batch allocation logic (off-by-one error)</li>
+<li>Database corruption (disk failure)</li>
+<li>Race condition in non-single-writer code path</li>
+<li>Manual admin error (direct SQL UPDATE)</li>
+<li>Concurrent independent consumers (misconfiguration)</li>
+</ol>
+<p><strong>Detection:</strong></p>
+<pre class="hljs"><code><div>Real-time monitoring:
+- Metric: oversell_count = max(0, sold_count - total_stock)
+- Alert: IF oversell_count &gt; 0 → IMMEDIATE page on-call
+- Frequency: Check every 10 seconds
+</div></code></pre>
+<p><strong>Recovery Procedure:</strong></p>
+<pre class="hljs"><code><div>Step 1 (T=0): STOP accepting new reservations (return 503)
+Step 2 (T=1-5min): Determine which orders to refund (last N orders)
+Step 3 (T=5-30min): Initiate refunds, notify customers
+Step 4 (T=30min+): Root cause analysis, fix bug, deploy
+Step 5: Resume sales only after verification
+</div></code></pre>
+<p><strong>Cost of Oversell:</strong></p>
+<pre class="hljs"><code><div>Per oversold unit:
+- Refund: $100-500 (product price)
+- Processing: $10 (refund fee)
+- Compensation: $50 (goodwill credit)
+- Reputation: Immeasurable
+
+100 units oversold = $16,000 direct cost + reputation damage
+Prevention investment &gt;&gt; recovery cost
+</div></code></pre>
+<hr>
+<h3 id="critical-risk-2-single-writer-consumer-failure">Critical Risk 2: Single-Writer Consumer Failure</h3>
+<p><strong>Risk</strong>: Kafka consumer crashes, inventory updates stop</p>
+<p><strong>Scenario:</strong></p>
+<pre class="hljs"><code><div>T=0: Consumer processing batch
+T=10ms: Database timeout, consumer crashes
+T=21ms: Kafka offset not committed
+T=22ms: New consumer starts (automatic failover)
+T=23ms: Consumer replays batch (idempotency prevents duplicates)
+Result: Safe recovery, no data loss ✓
+</div></code></pre>
+<p><strong>Mitigation:</strong></p>
+<ol>
+<li><strong>Multiple consumer instances</strong>: Primary + secondary on standby</li>
+<li><strong>Graceful shutdown</strong>: Finish batch, commit offset, then exit</li>
+<li><strong>Circuit breaker</strong>: Retry database operations, crash explicitly if failing</li>
+<li><strong>Health checks</strong>: Kubernetes restarts unhealthy pods automatically</li>
+</ol>
+<hr>
+<h3 id="critical-risk-3-cache-invalidation-failure">Critical Risk 3: Cache Invalidation Failure</h3>
+<p><strong>Risk</strong>: Redis unavailable, cache not invalidated, users see stale data</p>
+<p><strong>Analysis:</strong></p>
+<pre class="hljs"><code><div>Does stale cache cause oversell?
+
+Assumption: Cache miss → Query database for truth
+User sees stale cache: stock = 10,000
+User tries to reserve: Database check happens
+Database truth: stock = 9,999
+Database prevents oversell
+User gets error: &quot;Out of stock&quot;
+No oversell! ✓
+
+Stale cache only causes poor UX, not oversell.
+Database is always authority.
+</div></code></pre>
+<p><strong>Mitigation:</strong></p>
+<ol>
+<li><strong>Fallback to database</strong>: If Redis unavailable, serve from PostgreSQL</li>
+<li><strong>TTL safety net</strong>: Cache expires after 5 seconds</li>
+<li><strong>Dual invalidation</strong>: Retry cache delete with exponential backoff</li>
+<li><strong>Monitoring</strong>: Alert if cache hit rate drops below 80%</li>
+</ol>
+<hr>
+<h3 id="failure-mode-1-database-connection-pool-exhaustion">Failure Mode 1: Database Connection Pool Exhaustion</h3>
+<p><strong>Cause:</strong></p>
+<pre class="hljs"><code><div>Batch consumer holds connection for 10ms processing
+Concurrent connections: 100 batches/sec × 0.01s = 1 connection
+Plus analytics queries: 50 connections
+Plus replicas: 20 connections
+Total: 71 connections
+
+PostgreSQL max_connections: 100
+Headroom: 29 connections ✓
+
+But if queries slow down to 100ms:
+Concurrency: 100 × 0.1s = 10 connections
+Total: 80 connections (still okay)
+</div></code></pre>
+<p><strong>Mitigation:</strong></p>
+<ul>
+<li>Connection pooling (HikariCP): Max 20 per instance</li>
+<li>Database tuning: max_connections = 200</li>
+<li>Query optimization: Add indexes, analyze slow queries</li>
+<li>Monitoring: Alert if active_connections &gt; 80</li>
+</ul>
+<hr>
+<h3 id="failure-mode-2-kafka-consumer-lag-growing">Failure Mode 2: Kafka Consumer Lag Growing</h3>
+<p><strong>Cause:</strong></p>
+<pre class="hljs"><code><div>Consumer cannot keep up:
+- Producer: 25k messages/second
+- Consumer: 250 messages per 15ms (not 10ms) = 16.6k/sec
+- Backlog: 25k - 16.6k = 8.4k messages/sec
+- After 1 minute: 504k messages behind
+</div></code></pre>
+<p><strong>Symptoms:</strong></p>
+<ul>
+<li>Queue position numbers growing</li>
+<li>P95 latency increasing</li>
+<li>Users report slow reservations</li>
+</ul>
+<p><strong>Mitigation:</strong></p>
+<ol>
+<li><strong>Real-time monitoring</strong>: Alert if lag &gt; 10,000 messages</li>
+<li><strong>Optimization</strong>: Profile batch processing, optimize database queries</li>
+<li><strong>Scaling</strong>: Increase batch size to 500 (reduces latency headroom)</li>
+<li><strong>Graceful degradation</strong>: If lag &gt; 100k, return 503 &quot;Try again later&quot;</li>
+</ol>
+<hr>
+<p><strong>End of Document</strong></p>
+<p>For detailed implementation questions, refer to:</p>
+<ul>
+<li>SYSTEM_ARCHITECTURE_ULTRA_V2.md (comprehensive decision trees)</li>
+<li>QUEUE_WAIT_ANALYSIS.md (mathematical derivation)</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "cacheClusterId": "flash-sale-redis",
+  "endpoint": "flash-sale-redis.s8ocwg.0001.aps1.cache.amazonaws.com",
+  "port": 6379,
+  "cacheSubnetGroup": "flash-sale-redis-subnet-group",
+  "parameterGroup": "flash-sale-redis-params",
+  "engineVersion": "7.0",
+  "nodeType": "cache.t3.micro"
+}

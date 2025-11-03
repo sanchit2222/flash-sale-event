@@ -1,0 +1,11 @@
+{
+  "dbInstanceIdentifier": "flash-sale-postgres",
+  "dbName": "flashsaledb",
+  "dbUsername": "flashsaleadmin",
+  "dbPassword": "aiwoqxb3f1vzQXVmcG20tBzj8",
+  "dbEndpoint": "flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com",
+  "dbPort": 5432,
+  "jdbcUrl": "jdbc:postgresql://flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com:5432/flashsaledb",
+  "dbSubnetGroup": "flash-sale-db-subnet-group",
+  "parameterGroup": "flash-sale-postgres-params"
+}

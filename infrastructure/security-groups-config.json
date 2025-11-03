@@ -1,0 +1,7 @@
+{
+  "albSecurityGroup": "sg-0d9cfe1e6fc1216b4",
+  "appSecurityGroup": "sg-0b0f70620a7859354",
+  "rdsSecurityGroup": "sg-0ded7b945d62a87f6",
+  "redisSecurityGroup": "sg-08584c23b5334d904",
+  "kafkaSecurityGroup": "sg-0d84ecdad6d622647"
+}

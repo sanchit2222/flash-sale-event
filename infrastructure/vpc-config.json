@@ -1,0 +1,28 @@
+{
+  "vpcId": "vpc-017588df73d2791c8",
+  "region": "ap-south-1",
+  "internetGatewayId": "igw-08cb8a0c26b158322",
+  "subnets": {
+    "public": {
+      "subnet1": "subnet-03dc3a466eae28739",
+      "subnet2": "subnet-0557741f96f0d10df"
+    },
+    "private": {
+      "subnet1": "subnet-0c7e9da84cd734277",
+      "subnet2": "subnet-05a4116ce8259d369"
+    },
+    "database": {
+      "subnet1": "subnet-00f24ed4100cb7b09",
+      "subnet2": "subnet-06f8c6ff3fb8cadeb"
+    }
+  },
+  "natGateways": {
+    "natGateway1": "nat-04e23678552004a3a",
+    "natGateway2": "nat-0e4b88d095809aed7"
+  },
+  "routeTables": {
+    "public": "rtb-0eab323e85ce4c8f0",
+    "private1": "rtb-00bbc634bc6b9102e",
+    "private2": "rtb-0389ebd7fd59a37c2"
+  }
+}

@@ -1,0 +1,89 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Spring Boot
+spring-boot-*.log
+*.log.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Test coverage
+.jacoco/
+
+# Database
+*.db
+*.sqlite
+
+# Redis dump
+dump.rdb
+
+# Logs
+logs/
+*.log
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Gatling load test reports
+src/test/scala/results/
+results/
+
+# Docker
+docker-compose.override.yml
+
+# Windows invalid file
+nul
