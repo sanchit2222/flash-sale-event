@@ -3,6 +3,7 @@ package com.cred.freestyle.flashsale.infrastructure.messaging;
 import com.cred.freestyle.flashsale.domain.model.Reservation;
 import com.cred.freestyle.flashsale.domain.model.Reservation.ReservationStatus;
 import com.cred.freestyle.flashsale.infrastructure.cache.RedisCacheService;
+import com.cred.freestyle.flashsale.infrastructure.lock.RedisDistributedLock;
 import com.cred.freestyle.flashsale.infrastructure.messaging.events.ReservationEvent;
 import com.cred.freestyle.flashsale.infrastructure.messaging.events.ReservationRequestMessage;
 import com.cred.freestyle.flashsale.infrastructure.messaging.events.ReservationResponseMessage;
@@ -51,6 +52,7 @@ public class InventoryBatchConsumer {
     private final InventoryRepository inventoryRepository;
     private final UserPurchaseTrackingRepository userPurchaseTrackingRepository;
     private final RedisCacheService cacheService;
+    private final RedisDistributedLock redisLock;
     private final KafkaProducerService kafkaProducerService;
     private final CloudWatchMetricsService metricsService;
     private final ObjectMapper objectMapper;
@@ -72,6 +74,7 @@ public class InventoryBatchConsumer {
             InventoryRepository inventoryRepository,
             UserPurchaseTrackingRepository userPurchaseTrackingRepository,
             RedisCacheService cacheService,
+            RedisDistributedLock redisLock,
             KafkaProducerService kafkaProducerService,
             CloudWatchMetricsService metricsService,
             ObjectMapper objectMapper
@@ -80,6 +83,7 @@ public class InventoryBatchConsumer {
         this.inventoryRepository = inventoryRepository;
         this.userPurchaseTrackingRepository = userPurchaseTrackingRepository;
         this.cacheService = cacheService;
+        this.redisLock = redisLock;
         this.kafkaProducerService = kafkaProducerService;
         this.metricsService = metricsService;
         this.objectMapper = objectMapper;
@@ -472,16 +476,59 @@ public class InventoryBatchConsumer {
     }
 
     /**
-     * Check if idempotency key has been processed.
+     * Check if idempotency key has been processed using Redis distributed lock.
+     * This prevents race conditions where multiple concurrent requests with the same
+     * idempotency key could both pass the duplicate check before either is saved to DB.
+     *
+     * Algorithm:
+     * 1. Check in-memory cache first (fast path for same batch)
+     * 2. Acquire distributed lock for this idempotency key
+     * 3. Check database while holding lock
+     * 4. Release lock
+     *
+     * The lock ensures atomicity of check-then-insert operation across all consumer instances.
      */
     private boolean isDuplicate(String idempotencyKey) {
-        // Check in-memory cache first
+        // Check in-memory cache first (fast path for duplicates within same batch)
         if (processedIdempotencyKeys.containsKey(idempotencyKey)) {
             return true;
         }
 
-        // Check database
-        return reservationRepository.existsByIdempotencyKey(idempotencyKey);
+        // Acquire distributed lock to ensure atomic check-then-insert
+        // Lock key format: "lock:idempotency:{userId}:{skuId}"
+        String lockKey = "lock:idempotency:" + idempotencyKey;
+        String lockToken = redisLock.acquireLock(lockKey, java.time.Duration.ofSeconds(2));
+
+        if (lockToken == null) {
+            // Failed to acquire lock - another instance is processing same idempotency key
+            // Wait briefly and check database again
+            try {
+                Thread.sleep(50); // 50ms backoff
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Check database again after backoff
+            boolean isDuplicate = reservationRepository.existsByIdempotencyKey(idempotencyKey);
+            logger.debug("Lock acquisition failed for idempotency key: {}, duplicate check: {}",
+                        idempotencyKey, isDuplicate);
+            return isDuplicate;
+        }
+
+        try {
+            // Check database while holding lock (prevents race condition)
+            boolean isDuplicate = reservationRepository.existsByIdempotencyKey(idempotencyKey);
+
+            if (!isDuplicate) {
+                // Mark as processed in local cache to prevent re-checking within same batch
+                processedIdempotencyKeys.put(idempotencyKey, "");
+            }
+
+            return isDuplicate;
+        } finally {
+            // Always release lock
+            redisLock.releaseLock(lockKey, lockToken);
+        }
     }
 
     /**

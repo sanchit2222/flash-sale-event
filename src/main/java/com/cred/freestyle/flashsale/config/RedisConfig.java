@@ -131,26 +131,6 @@ public class RedisConfig {
         return template;
     }
 
-    /**
-     * Configure RedisTemplate for String operations.
-     * Used for simple cache operations like stock counts.
-     *
-     * @param connectionFactory Redis connection factory
-     * @return RedisTemplate with String serialization
-     */
-    @Bean
-    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-
-        // Use String serializer for both keys and values
-        StringRedisSerializer stringSerializer = new StringRedisSerializer();
-        template.setKeySerializer(stringSerializer);
-        template.setValueSerializer(stringSerializer);
-        template.setHashKeySerializer(stringSerializer);
-        template.setHashValueSerializer(stringSerializer);
-
-        template.afterPropertiesSet();
-        return template;
-    }
+    // Note: stringRedisTemplate is automatically provided by Spring Boot's RedisAutoConfiguration
+    // No need to define it manually to avoid bean definition conflicts
 }

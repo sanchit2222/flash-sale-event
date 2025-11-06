@@ -4,12 +4,14 @@ import com.cred.freestyle.flashsale.api.dto.ReservationRequest;
 import com.cred.freestyle.flashsale.api.dto.ReservationResponse;
 import com.cred.freestyle.flashsale.domain.model.Reservation;
 import com.cred.freestyle.flashsale.infrastructure.metrics.CloudWatchMetricsService;
+import com.cred.freestyle.flashsale.security.SecurityUtils;
 import com.cred.freestyle.flashsale.service.ReservationService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -39,16 +41,22 @@ public class ReservationController {
      * Create a new reservation for a flash sale product.
      * This endpoint handles the initial "Add to Cart" action during flash sale.
      *
+     * Authorization: User can only create reservations for themselves
+     *
      * @param request Reservation request with userId, skuId, quantity
      * @return Reservation response with reservation details and expiry time
      */
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReservationResponse> createReservation(
             @Valid @RequestBody ReservationRequest request
     ) {
         long startTime = System.currentTimeMillis();
 
         try {
+            // Verify user can only create reservations for themselves
+            SecurityUtils.verifyUserAccess(request.getUserId());
+
             logger.info("Creating reservation - user: {}, sku: {}, quantity: {}",
                     request.getUserId(), request.getSkuId(), request.getQuantity());
 
@@ -94,17 +102,24 @@ public class ReservationController {
     /**
      * Get reservation details by ID.
      *
+     * Authorization: User can only view their own reservations (or admin can view any)
+     *
      * @param reservationId Reservation ID
      * @return Reservation details
      */
     @GetMapping("/{reservationId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReservationResponse> getReservation(
             @PathVariable String reservationId
     ) {
         logger.debug("Fetching reservation: {}", reservationId);
 
         return reservationService.findReservationById(reservationId)
-                .map(ReservationResponse::fromEntity)
+                .map(reservation -> {
+                    // Verify user can only access their own reservations
+                    SecurityUtils.verifyUserAccess(reservation.getUserId());
+                    return ReservationResponse.fromEntity(reservation);
+                })
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -112,16 +127,26 @@ public class ReservationController {
     /**
      * Cancel a reservation before it expires or gets confirmed.
      *
+     * Authorization: User can only cancel their own reservations
+     *
      * @param reservationId Reservation ID to cancel
      * @return Cancelled reservation details
      */
     @DeleteMapping("/{reservationId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ReservationResponse> cancelReservation(
             @PathVariable String reservationId
     ) {
         logger.info("Cancelling reservation: {}", reservationId);
 
         try {
+            // Fetch reservation to verify ownership
+            Reservation reservation = reservationService.findReservationById(reservationId)
+                    .orElseThrow(() -> new IllegalStateException("Reservation not found"));
+
+            // Verify user can only cancel their own reservations
+            SecurityUtils.verifyUserAccess(reservation.getUserId());
+
             Reservation cancelled = reservationService.cancelReservation(reservationId);
             ReservationResponse response = ReservationResponse.fromEntity(cancelled);
 
@@ -138,14 +163,20 @@ public class ReservationController {
     /**
      * Get all active reservations for a user.
      *
+     * Authorization: User can only view their own reservations
+     *
      * @param userId User ID
      * @return List of active reservations
      */
     @GetMapping("/user/{userId}/active")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<java.util.List<ReservationResponse>> getUserActiveReservations(
             @PathVariable String userId
     ) {
         logger.debug("Fetching active reservations for user: {}", userId);
+
+        // Verify user can only access their own reservations
+        SecurityUtils.verifyUserAccess(userId);
 
         java.util.List<ReservationResponse> reservations = reservationService
                 .getActiveReservationsByUserId(userId)

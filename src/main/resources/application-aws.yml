@@ -6,10 +6,10 @@ spring:
   application:
     name: flash-sale-service
 
-  # Database Configuration (RDS PostgreSQL)
+  # Database Configuration (RDS PostgreSQL / Docker PostgreSQL)
   datasource:
-    url: jdbc:postgresql://flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com:5432/flashsaledb
-    username: flashsaleadmin
+    url: jdbc:postgresql://${DB_HOST:flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com}:${DB_PORT:5432}/${DB_NAME:flashsaledb}
+    username: ${DB_USERNAME:flashsaleadmin}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
@@ -25,7 +25,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate  # Use Flyway/Liquibase for migrations in production
+      ddl-auto: update  # Use 'validate' with Flyway/Liquibase in production, 'update' for local development
     properties:
       hibernate:
         format_sql: false
@@ -35,25 +35,25 @@ spring:
         order_updates: true
     show-sql: false
 
-  # Redis Configuration (ElastiCache)
+  # Redis Configuration (ElastiCache / Docker Redis)
   data:
     redis:
-      host: flash-sale-redis.s8ocwg.0001.aps1.cache.amazonaws.com
-      port: 6379
+      host: ${REDIS_HOST:flash-sale-redis.s8ocwg.0001.aps1.cache.amazonaws.com}
+      port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
       database: 0
-      timeout: 2000ms
+      timeout: 2000
       lettuce:
         pool:
           max-active: 50
           max-idle: 20
           min-idle: 5
-          max-wait: 2000ms
+          max-wait: 2000
         shutdown-timeout: 100ms
 
-  # Kafka Configuration (EC2-hosted)
+  # Kafka Configuration (EC2-hosted / Docker Kafka)
   kafka:
-    bootstrap-servers: 10.0.10.61:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:10.0.10.61:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

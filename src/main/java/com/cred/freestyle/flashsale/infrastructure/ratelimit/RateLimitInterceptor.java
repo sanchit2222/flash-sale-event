@@ -51,7 +51,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             logger.warn("Rate limit exceeded for user: {}, ip: {}, tier: {}",
                        userId, ipAddress, result.getTier());
 
-            response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+            response.setStatus(429); // 429 Too Many Requests
             response.setHeader("Retry-After", String.valueOf(result.getRetryAfterSeconds()));
             response.setHeader("X-RateLimit-Limit", String.valueOf(result.getTier().getMaxRequests()));
             response.setHeader("X-RateLimit-Remaining", "0");
