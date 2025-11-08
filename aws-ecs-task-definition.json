@@ -4,12 +4,12 @@
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "2048",
   "memory": "4096",
-  "executionRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::YOUR_ACCOUNT_ID:role/flashSaleTaskRole",
+  "executionRoleArn": "arn:aws:iam::095866558012:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::095866558012:role/flashSaleTaskRole",
   "containerDefinitions": [
     {
       "name": "flash-sale-app",
-      "image": "YOUR_ACCOUNT_ID.dkr.ecr.ap-south-1.amazonaws.com/flash-sale:latest",
+      "image": "095866558012.dkr.ecr.ap-south-1.amazonaws.com/flash-sale:latest",
       "cpu": 2048,
       "memory": 4096,
       "essential": true,
@@ -30,7 +30,7 @@
         },
         {
           "name": "DB_HOST",
-          "value": "YOUR_RDS_ENDPOINT"
+          "value": "flash-sale-postgres.cd2m8wkacytk.ap-south-1.rds.amazonaws.com"
         },
         {
           "name": "DB_PORT",
@@ -38,15 +38,15 @@
         },
         {
           "name": "DB_NAME",
-          "value": "flashsale"
+          "value": "flashsaledb"
         },
         {
           "name": "DB_USERNAME",
-          "value": "flashsale_user"
+          "value": "flashsaleadmin"
         },
         {
           "name": "REDIS_HOST",
-          "value": "YOUR_ELASTICACHE_ENDPOINT"
+          "value": "flash-sale-redis.s8ocwg.0001.aps1.cache.amazonaws.com"
         },
         {
           "name": "REDIS_PORT",
@@ -54,17 +54,17 @@
         },
         {
           "name": "KAFKA_BOOTSTRAP_SERVERS",
-          "value": "YOUR_MSK_ENDPOINT:9092"
+          "value": "10.0.10.61:9092"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "value": ""
         }
       ],
       "secrets": [
         {
           "name": "DB_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-south-1:YOUR_ACCOUNT_ID:secret:flash-sale/db-password"
-        },
-        {
-          "name": "REDIS_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-south-1:YOUR_ACCOUNT_ID:secret:flash-sale/redis-password"
+          "valueFrom": "arn:aws:secretsmanager:ap-south-1:095866558012:secret:flash-sale/db-password-KuPYVj"
         }
       ],
       "logConfiguration": {

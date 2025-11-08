@@ -4,6 +4,7 @@ import com.cred.freestyle.flashsale.domain.model.Inventory;
 import com.cred.freestyle.flashsale.domain.model.Reservation;
 import com.cred.freestyle.flashsale.domain.model.Reservation.ReservationStatus;
 import com.cred.freestyle.flashsale.infrastructure.cache.RedisCacheService;
+import com.cred.freestyle.flashsale.infrastructure.lock.RedisDistributedLock;
 import com.cred.freestyle.flashsale.infrastructure.messaging.events.ReservationEvent;
 import com.cred.freestyle.flashsale.infrastructure.messaging.events.ReservationRequestMessage;
 import com.cred.freestyle.flashsale.infrastructure.metrics.CloudWatchMetricsService;
@@ -50,6 +51,9 @@ class InventoryBatchConsumerTest {
     private RedisCacheService cacheService;
 
     @Mock
+    private RedisDistributedLock distributedLock;
+
+    @Mock
     private KafkaProducerService kafkaProducerService;
 
     @Mock
@@ -75,6 +79,7 @@ class InventoryBatchConsumerTest {
             inventoryRepository,
             userPurchaseTrackingRepository,
             cacheService,
+            distributedLock,
             kafkaProducerService,
             metricsService,
             objectMapper

@@ -7,8 +7,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Spring Profile
-      SPRING_PROFILES_ACTIVE: aws
+      # Spring Profile (using default for local Docker deployment)
+      # SPRING_PROFILES_ACTIVE: aws  # Commented out - using default profile for local
 
       # Database Configuration
       DB_HOST: postgres
